@@ -1,4 +1,9 @@
-from sqlalchemy import Column, ForeignKey, Integer, String
+
+import os
+import sys
+import datetime
+
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
@@ -13,7 +18,15 @@ class User(Base):
     name = Column(String(250), nullable=False)
     email = Column(String(250), nullable=False)
     picture = Column(String(250))
-
+    @property
+    def serialize(self):
+            """Return object data in easily serializeable format"""
+            return {
+                    'id': self.id,
+                    'name': self.user_name,
+                    'email': self.user_email,
+                    'picture': self.user_pic,
+            }
 
 class Sport(Base):
     __tablename__ = 'sport'
@@ -49,15 +62,13 @@ class RecentlyAdded(Base):
     def serialize(self):
         """Return object data in easily serializeable format"""
         return {
-            'name': self.name,
-            'description': self.description,
-            'id': self.id,
-            'price': self.price,
-            # 'course': self.course,
+                'name': self.name,
+                'description': self.description,
+                'id': self.id,
+                'price': self.price,
+                # 'course': self.course,
         }
 
 
 engine = create_engine('sqlite:///application.db')
-
-
 Base.metadata.create_all(engine)
